@@ -1,4 +1,5 @@
 {
+  "homepage": "https://kanpurin.github.io/GraphVisualizer/",
   "name": "graphvisualizer",
   "version": "0.1.0",
   "private": true,
@@ -12,10 +13,13 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "node scripts/start.js",
+    "build": "node scripts/build.js",
+    "test": "node scripts/test.js",
+    "rm": "rm -rf docs",
+    "mv": "move build docs",
+    "git": "git add . && git commit -m \"auto commit\" && git push origin main",
+    "deploy": "npm run rm && npm run build && npm run mv && npm run git"
   },
   "eslintConfig": {
     "extends": [
