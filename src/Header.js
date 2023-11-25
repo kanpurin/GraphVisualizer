@@ -3,7 +3,7 @@ import React from "react";
 
 function Header() {
   return (
-    <h1 className='bg-primary text-white display-4'>Random Generator</h1>
+    <h1 className='bg-primary text-white display-4'>GraphVisualizer</h1>
   );
 }
 

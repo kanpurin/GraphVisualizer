@@ -8,7 +8,7 @@ function App() {
   return (
 		<div>
       <Header />
-      <DrawUndirectedGraph nodes={[0,1,2]} edges={[[0,1]]}/>
+      <DrawUndirectedGraph nodes={[]} edges={[]}/>
       <Footer />
 		</div>
   );
