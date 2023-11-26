@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 function DrawUndirectedGraph() {
   const containerRef = useRef(null);
+  const networkRef = useRef(null); // Networkコンポーネントへの参照を保持するためのref
   const [nodesData, setNodesData] = useState([]);
   const [edgesData, setEdgesData] = useState([]);
 
@@ -41,6 +42,7 @@ function DrawUndirectedGraph() {
     };
 
     const network = new Network(containerRef.current, data, options);
+    networkRef.current = network; // リファレンスをセットする
 
     network.on('doubleClick', function(params) {
       if ((params.nodes.length === 0) && (params.edges.length === 0)) {
@@ -106,6 +108,25 @@ function DrawUndirectedGraph() {
 
     return () => {
       // Cleanup code here if needed
+    };
+  }, []);
+
+  
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerHeight > window.innerWidth) {
+        networkRef.current.setOptions({ manipulation: { enabled: true } });
+      } else {
+        networkRef.current.setOptions({ manipulation: { enabled: false } });
+      }
+    };
+  
+    handleResize(); // 最初のレンダリング時にも呼び出す
+  
+    window.addEventListener('resize', handleResize); // 画面サイズ変更時に実行
+  
+    return () => {
+      window.removeEventListener('resize', handleResize); // イベントリスナーのクリーンアップ
     };
   }, []);
 
