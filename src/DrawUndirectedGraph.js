@@ -47,14 +47,37 @@ function DrawUndirectedGraph() {
     network.on('doubleClick', function(params) {
       if ((params.nodes.length === 0) && (params.edges.length === 0)) {
         const newNodeId = uuidv4(); // UUIDを生成
-        
         const newNodeLabel = `${nodes.length + 1}`; // ラベルを設定
-        var updatedIds = nodes.add([{
-          id: newNodeId, // 新しいノードのIDを設定
-          label: newNodeLabel,
-          x: params.pointer.canvas.x,
-          y: params.pointer.canvas.y
-        }]);
+        var updatedIds;
+        if (params.event.srcEvent.shiftKey) {
+          updatedIds = nodes.add([{
+            id: newNodeId, // 新しいノードのIDを設定
+            label: newNodeLabel,
+            x: params.pointer.canvas.x,
+            y: params.pointer.canvas.y,
+            physics: false
+          }]);
+        }
+        else {
+          updatedIds = nodes.add([{
+            id: newNodeId, // 新しいノードのIDを設定
+            label: newNodeLabel,
+            x: params.pointer.canvas.x,
+            y: params.pointer.canvas.y,
+            color: {
+              border: '#000000',
+              background: '#FFFFFF',
+              highlight: {
+                border: '#000000',
+                background: '#FFFFFF'
+              },
+              hover: {
+                border: '#000000',
+                background: '#FFFFFF'
+              }
+            }
+          }]);
+        }
         network.selectNodes([updatedIds[0]]);
         network.editNode();
         lastSelectedNodeId = newNodeId;
@@ -88,6 +111,7 @@ function DrawUndirectedGraph() {
         if (lastSelectedNodeId !== undefined && nodeId !== undefined) {
           console.log('from:'+lastSelectedNodeId+" to:"+nodeId);
           edges.add({
+            color: {inherit:false},
             from: lastSelectedNodeId,
             to: nodeId,
           });
