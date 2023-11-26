@@ -100,7 +100,7 @@ function DrawUndirectedGraph() {
         } else if (edgeId !== undefined) {
           edges.remove({ id: edgeId });
         }
-        lastSelectedNodeId = nodeId;
+        lastSelectedNodeId = undefined;
       }
     });
 
