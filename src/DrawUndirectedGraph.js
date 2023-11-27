@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { v4 as uuidv4 } from 'uuid';
+import 'bootstrap/dist/css/bootstrap.min.css'; // BootstrapのCSSをインポート
+import { Button } from 'react-bootstrap'; // React BootstrapからButtonをインポート
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
 function DrawUndirectedGraph() {
   const containerRef = useRef(null);
@@ -134,30 +138,6 @@ function DrawUndirectedGraph() {
       setEdgesData(edges.get());
     });
 
-    return () => {
-      // Cleanup code here if needed
-    };
-  }, []);
-
-  useEffect(() => {
-    const updatedTextareaValue = `${nodesData.length} ${edgesData.length}\n${edgesData.map(edge => {
-      const fromNode = nodesData.find(node => node.id === edge.from);
-      const toNode = nodesData.find(node => node.id === edge.to);
-      const fromLabel = fromNode ? fromNode.label : '';
-      const toLabel = toNode ? toNode.label : '';
-      return `${fromLabel} ${toLabel}`;
-    }).join('\n')}`;
-    setTextareaValue(updatedTextareaValue);
-  }, [nodesData, edgesData]);
-
-  const handleTextareaChange = (e) => {
-    setTextareaValue(e.target.value); // ユーザーの入力をtextareaValueに反映
-    const text = e.target.value;
-    const lines = text.split('\n');
-    console.log(lines);
-  };
-
-  useEffect(() => {
     const handleResize = () => {
       if (window.innerHeight > window.innerWidth) {
         networkRef.current.setOptions({ manipulation: { enabled: true } });
@@ -175,15 +155,41 @@ function DrawUndirectedGraph() {
     };
   }, []);
 
+  useEffect(() => {
+    const updatedTextareaValue = `${nodesData.length} ${edgesData.length}\n${edgesData.map(edge => {
+      const fromNode = nodesData.find(node => node.id === edge.from);
+      const toNode = nodesData.find(node => node.id === edge.to);
+      const fromLabel = fromNode ? fromNode.label : '';
+      const toLabel = toNode ? toNode.label : '';
+      return `${fromLabel} ${toLabel}`;
+    }).join('\n')}`;
+    setTextareaValue(updatedTextareaValue);
+  }, [nodesData, edgesData]);
+
+  const handleTextareaChange = (e) => {
+    setTextareaValue(e.target.value); // ユーザーの入力をtextareaValueに反映
+  };
+
+  const handleOutputTextarea = () => {
+  };
+
   return (
-    <div className="container">
-      <div className="my-3 border" id="mynetwork" ref={containerRef} style={{ height: '400px', borderRadius: '10px' }}></div>
-      <div className="input-group my-3" style={{ flex: '1', overflow: 'auto'}}>
+    <div className="my-3 container" style={{ position: 'relative' }}>
+      <div className="my-1 border" id="mynetwork" ref={containerRef} style={{ height: '400px', borderRadius: '10px' }}></div>
+      <div className="my-1 position-relative">
         <textarea className="form-control"
           value={textareaValue}
-          onChange={handleTextareaChange} // ユーザーの入力を処理するハンドラーを追加
+          onChange={handleTextareaChange}
           style={{ width: '100%', height: '300px' }}
         />
+        <button className="btn btn-primary" onClick={() => navigator.clipboard.writeText(textareaValue)} style={{ position: 'absolute', top: '5px', right: '5px', backgroundColor: 'transparent', border: 'none' }}>
+          <FontAwesomeIcon icon={faCopy} style={{ color: 'gray' }} /> {/* FontAwesomeのコピーのアイコン */}
+        </button>
+      </div>
+      <div className="d-flex justify-content-end">
+        <Button variant="primary" onClick={handleOutputTextarea}>
+          Draw Graph
+        </Button>
       </div>
     </div>
   );
