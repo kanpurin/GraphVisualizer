@@ -33,10 +33,10 @@ function DrawUndirectedGraph() {
       },
       nodes: {
         widthConstraint: {
-          minimum: 14
+          minimum: 20
         },
         font: {
-          size: 14
+          size: 20
         }
       },
     };
