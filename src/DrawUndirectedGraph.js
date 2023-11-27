@@ -162,7 +162,13 @@ function DrawUndirectedGraph() {
       <div className="my-3 border" id="mynetwork" ref={containerRef} style={{ height: '400px', borderRadius: '10px' }}></div>
       <div className="input-group my-3" style={{ flex: '1', overflow: 'auto'}}>
         <textarea className="form-control"
-          value={`${nodesData.length} ${edgesData.length}\n${edgesData.map(edge => `${nodesData.find(node => node.id === edge.from).label} ${nodesData.find(node => node.id === edge.to).label}`).join('\n')}`}
+          value={`${nodesData.length} ${edgesData.length}\n${edgesData.map(edge => {
+            const fromNode = nodesData.find(node => node.id === edge.from);
+            const toNode = nodesData.find(node => node.id === edge.to);
+            const fromLabel = fromNode ? fromNode.label : '';
+            const toLabel = toNode ? toNode.label : '';
+            return `${fromLabel} ${toLabel}`;
+          }).join('\n')}`}
           onChange={(e) => {
             // textareaの内容を処理するための処理
             const text = e.target.value;
