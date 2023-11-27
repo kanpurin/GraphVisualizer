@@ -6,17 +6,88 @@ import { Button } from 'react-bootstrap'; // React BootstrapからButtonをイ�
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
+// ノードを追加する関数
+const addNode = (nodes, edges, network, newNodeId, newNodeLabel, x, y) => {
+  nodes.add([{
+    id: newNodeId,
+    label: newNodeLabel,
+    x: x,
+    y: y,
+    physics: true,
+    color: {
+      border: '#000000',
+      background: '#FFFFFF',
+      highlight: {
+        border: '#000000',
+        background: '#FFFFFF'
+      },
+      hover: {
+        border: '#000000',
+        background: '#FFFFFF'
+      }
+    }
+  }]);
+
+  network.selectNodes([newNodeId]); // 新しいノードを選択状態にする
+  network.editNode(); // ノードの編集モードを開始
+};
+
+// 頂点を削除する関数
+const removeNode = (nodes, edges, nodeId) => {
+  const connectedEdges = edges.get({ filter: (edge) => edge.from === nodeId || edge.to === nodeId });
+  const deleteLabel = nodes.get(nodeId).label;
+
+  edges.remove(connectedEdges.map(edge => edge.id));
+  nodes.remove({ id: nodeId });
+
+  nodes.forEach((node) => {
+    if (node.label > deleteLabel) {
+      nodes.updateOnly({ id: node.id, label: `${node.label - 1}` });
+    }
+  });
+};
+
+// エッジを追加する関数
+const addEdge = (edges, fromNodeId, toNodeId) => {
+  edges.add({
+    color: { inherit: false },
+    from: fromNodeId,
+    to: toNodeId,
+  });
+};
+
+// エッジを削除する関数
+const removeEdge = (edges, edgeId) => {
+  edges.remove({ id: edgeId });
+};
+
+// ノードのphysicsを切り替える関数
+const toggleNodePhysics = (nodes, nodeId) => {
+  const node = nodes.get(nodeId);
+  const physics = !node.physics;
+  const colorBackground = physics ? '#FFFFFF' : '#AAAAAA';
+  nodes.update({
+    id: nodeId,
+    physics: physics,
+    color: {
+      background: colorBackground,
+      highlight: { background: colorBackground },
+      hover: { background: colorBackground }
+    }
+  });
+};
+
 function DrawUndirectedGraph() {
   const containerRef = useRef(null);
   const networkRef = useRef(null); // Networkコンポーネントへの参照を保持するためのref
   const [nodesData, setNodesData] = useState([]);
   const [edgesData, setEdgesData] = useState([]);
   const [textareaValue, setTextareaValue] = useState(''); // textareaの値を管理するstate
+  const lastSelectedNodeId = useRef(null);
 
   useEffect(() => {
     const nodes = new DataSet();
     const edges = new DataSet();
-    let lastSelectedNodeId = null;
     
     const data = {
       nodes: nodes,
@@ -50,82 +121,36 @@ function DrawUndirectedGraph() {
     networkRef.current = network; // リファレンスをセットする
 
     network.on('doubleClick', function(params) {
-      if ((params.nodes.length === 0) && (params.edges.length === 0)) {
-        const newNodeId = uuidv4(); // UUIDを生成
-        const newNodeLabel = `${nodes.length + 1}`; // ラベルを設定
-        var updatedIds;
-        updatedIds = nodes.add([{
-          id: newNodeId, // 新しいノードのIDを設定
-          label: newNodeLabel,
-          x: params.pointer.canvas.x,
-          y: params.pointer.canvas.y,
-          physics: true,
-          color: {
-            border: '#000000',
-            background: '#FFFFFF',
-            highlight: {
-              border: '#000000',
-              background: '#FFFFFF'
-            },
-            hover: {
-              border: '#000000',
-              background: '#FFFFFF'
-            }
-          }
-        }]);
-        network.selectNodes([updatedIds[0]]);
-        network.editNode();
-        lastSelectedNodeId = newNodeId;
-      }
-      else {
-        const nodeId = params.nodes[0];
-        const edgeId = params.edges[0];
-        if (nodeId !== undefined) {
-          // ノードを削除すると同時に、接続されたエッジも削除
-          const connectedEdges = edges.get({ filter: (edge) => edge.from === nodeId || edge.to === nodeId });
-          const deleteLabel = nodes.get(nodeId).label;
-          edges.remove(connectedEdges.map(edge => edge.id));
-          nodes.remove({ id: nodeId });
-          // ノードが削除された後、削除されたIDより大きなIDを持つノードのIDを1つずつ減らす
-          nodes.forEach((node) => {
-            if (node.label > deleteLabel) {
-              nodes.updateOnly({ id: node.id, label: `${node.label-1}` });
-            }
-          });
-        } else if (edgeId !== undefined) {
-          edges.remove({ id: edgeId });
+      const clickedNodeId = params.nodes[0];
+      const clickedEdgeId = params.edges[0];
+    
+      if (clickedNodeId === undefined && clickedEdgeId === undefined) {
+        const newNodeId = uuidv4();
+        const newNodeLabel = `${nodes.length + 1}`;
+        addNode(nodes, edges, network, newNodeId, newNodeLabel, params.pointer.canvas.x, params.pointer.canvas.y);
+        lastSelectedNodeId.current = newNodeId;
+      } else {
+        if (clickedNodeId !== undefined) {
+          removeNode(nodes, edges, clickedNodeId);
+        } else if (clickedEdgeId !== undefined) {
+          removeEdge(edges, clickedEdgeId);
         }
-        lastSelectedNodeId = undefined;
+        lastSelectedNodeId.current = undefined;
       }
     });
 
     network.on('click', function(params) {
       const nodeId = params.nodes[0];
-      if (params.event.srcEvent.ctrlKey) {
-        if (lastSelectedNodeId !== undefined && nodeId !== undefined) {
-          console.log('from:'+lastSelectedNodeId+" to:"+nodeId);
-          edges.add({
-            color: {inherit:false},
-            from: lastSelectedNodeId,
-            to: nodeId,
-          });
-        }
+      const ctrlKey = params.event.srcEvent.ctrlKey;
+      const shiftKey = params.event.srcEvent.shiftKey;
+    
+      if (ctrlKey && lastSelectedNodeId.current !== undefined && nodeId !== undefined) {
+        addEdge(edges, lastSelectedNodeId.current, nodeId);
+      } else if (shiftKey && nodeId !== undefined) {
+        toggleNodePhysics(nodes, nodeId);
       }
-      else if (params.event.srcEvent.shiftKey) {
-        if (nodeId !== undefined) {
-          const node = nodes.get(nodeId);
-          const physics = !node.physics;
-          const colorBackground = physics ? '#FFFFFF' : '#AAAAAA';
-          nodes.update({ id: nodeId, physics: physics, 
-            color: {
-              background: colorBackground,
-              highlight: { background: colorBackground },
-              hover: { background: colorBackground }
-            }
-          });
-        }
-      }
-      lastSelectedNodeId = nodeId;
+    
+      lastSelectedNodeId.current = nodeId;
     });
 
     // ノードが変更されたときのイベントリスナー
