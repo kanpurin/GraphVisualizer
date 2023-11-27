@@ -7,6 +7,7 @@ function DrawUndirectedGraph() {
   const networkRef = useRef(null); // Networkコンポーネントへの参照を保持するためのref
   const [nodesData, setNodesData] = useState([]);
   const [edgesData, setEdgesData] = useState([]);
+  const [textareaValue, setTextareaValue] = useState(''); // textareaの値を管理するstate
 
   useEffect(() => {
     const nodes = new DataSet();
@@ -138,7 +139,24 @@ function DrawUndirectedGraph() {
     };
   }, []);
 
-  
+  useEffect(() => {
+    const updatedTextareaValue = `${nodesData.length} ${edgesData.length}\n${edgesData.map(edge => {
+      const fromNode = nodesData.find(node => node.id === edge.from);
+      const toNode = nodesData.find(node => node.id === edge.to);
+      const fromLabel = fromNode ? fromNode.label : '';
+      const toLabel = toNode ? toNode.label : '';
+      return `${fromLabel} ${toLabel}`;
+    }).join('\n')}`;
+    setTextareaValue(updatedTextareaValue);
+  }, [nodesData, edgesData]);
+
+  const handleTextareaChange = (e) => {
+    setTextareaValue(e.target.value); // ユーザーの入力をtextareaValueに反映
+    const text = e.target.value;
+    const lines = text.split('\n');
+    console.log(lines);
+  };
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerHeight > window.innerWidth) {
@@ -162,19 +180,8 @@ function DrawUndirectedGraph() {
       <div className="my-3 border" id="mynetwork" ref={containerRef} style={{ height: '400px', borderRadius: '10px' }}></div>
       <div className="input-group my-3" style={{ flex: '1', overflow: 'auto'}}>
         <textarea className="form-control"
-          value={`${nodesData.length} ${edgesData.length}\n${edgesData.map(edge => {
-            const fromNode = nodesData.find(node => node.id === edge.from);
-            const toNode = nodesData.find(node => node.id === edge.to);
-            const fromLabel = fromNode ? fromNode.label : '';
-            const toLabel = toNode ? toNode.label : '';
-            return `${fromLabel} ${toLabel}`;
-          }).join('\n')}`}
-          onChange={(e) => {
-            // textareaの内容を処理するための処理
-            const text = e.target.value;
-            const lines = text.split('\n');
-            console.log(lines);
-          }}
+          value={textareaValue}
+          onChange={handleTextareaChange} // ユーザーの入力を処理するハンドラーを追加
           style={{ width: '100%', height: '300px' }}
         />
       </div>
