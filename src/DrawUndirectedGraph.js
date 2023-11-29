@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
 // ノードを追加する関数
-const addNode = (nodes, edges, network, newNodeId, newNodeLabel, x, y) => {
+const addNode = (nodes, newNodeId, newNodeLabel, x, y) => {
   nodes.add([{
     id: newNodeId,
     label: newNodeLabel,
@@ -124,7 +124,7 @@ function DrawUndirectedGraph() {
       if (clickedNodeId === undefined && clickedEdgeId === undefined) {
         const newNodeId = uuidv4();
         const newNodeLabel = `${nodes.length + 1}`;
-        addNode(nodes, edges, network, newNodeId, newNodeLabel, params.pointer.canvas.x, params.pointer.canvas.y);
+        addNode(nodes, newNodeId, newNodeLabel, params.pointer.canvas.x, params.pointer.canvas.y);
       } else {
         if (clickedNodeId !== undefined) {
           removeNode(nodes, edges, clickedNodeId);
