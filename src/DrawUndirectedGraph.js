@@ -27,9 +27,6 @@ const addNode = (nodes, edges, network, newNodeId, newNodeLabel, x, y) => {
       }
     }
   }]);
-
-  network.selectNodes([newNodeId]); // 新しいノードを選択状態にする
-  network.editNode(); // ノードの編集モードを開始
 };
 
 // 頂点を削除する関数
@@ -128,15 +125,14 @@ function DrawUndirectedGraph() {
         const newNodeId = uuidv4();
         const newNodeLabel = `${nodes.length + 1}`;
         addNode(nodes, edges, network, newNodeId, newNodeLabel, params.pointer.canvas.x, params.pointer.canvas.y);
-        lastSelectedNodeId.current = newNodeId;
       } else {
         if (clickedNodeId !== undefined) {
           removeNode(nodes, edges, clickedNodeId);
         } else if (clickedEdgeId !== undefined) {
           removeEdge(edges, clickedEdgeId);
         }
-        lastSelectedNodeId.current = undefined;
       }
+      lastSelectedNodeId.current = undefined;
     });
 
     network.on('click', function(params) {
