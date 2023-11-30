@@ -9,6 +9,8 @@ function GraphTextarea(props) {
   const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
+    console.log(`nodesData :\n${props.nodesData.join(' ')}`);
+    console.log(`edgesData :\n${props.edgesData.map(edge=>edge.join(' ')).join('\n')}`);
     const updatedTextareaValue = `${props.nodesData.length} ${props.edgesData.length}\n${props.edgesData.map(edge => edge.join(' ')).join('\n')}`;
     setTextareaValue(updatedTextareaValue);
   }, [props.nodesData, props.edgesData]);
@@ -40,21 +42,21 @@ function GraphTextarea(props) {
     lines.slice(1)
       .forEach((line, index) => {
         const nums = line.trim().split(' ');
+        const lineNumber = index + 2; // 0-indexed lines
+        const [u, v] = nums.map(Number);
         if (nums.length !== 2) {
-          alert('グラフは以下の形式で与えてください。\nN M\nu_1 v_1\nu_2 v_2\n...\nu_M v_M');
+          alert(`Invalid input: ${lineNumber}行目\n\nグラフは以下の形式で与えてください。\nN (M)\nu_1 v_1\nu_2 v_2\n...\nu_M v_M`);
           throw new Error('Invalid input: Each line should contain two numbers.');
         }
-        const [u, v] = nums.map(Number);
         if (isNaN(u) || isNaN(v) || u < 1 || u > N || v < 1 || v > N) {
-          const lineNumber = index + 2; // 0-indexed lines
-          alert(`頂点番号は1以上N以下で指定してください\n${lineNumber}行目: ${u} ${v}`);
+          alert(`Invalid input: ${lineNumber}行目\n\n頂点番号は1以上N以下で指定してください`);
           throw new Error(`Invalid input: Edge at line ${lineNumber} is incorrect.`);
         }
         edges.push([u, v]);
       });
 
-    if (edges.length !== M) {
-      alert('グラフの辺の数がMと一致しません\n\nグラフは以下の形式で与えてください。\nN M\nu_1 v_1\nu_2 v_2\n...\nu_M v_M');
+    if (M !== undefined && edges.length !== M) {
+      alert(`グラフの辺の数(${edges.length})がM(${M})と一致しません\n\nグラフは以下の形式で与えてください。\nN (M)\nu_1 v_1\nu_2 v_2\n...\nu_M v_M`);
       throw new Error('Invalid input: Edge count does not match M.');
     }
 
