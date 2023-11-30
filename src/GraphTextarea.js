@@ -6,10 +6,10 @@ import { faCheckCircle, faClipboard } from '@fortawesome/free-solid-svg-icons';
 
 function GraphTextarea(props) {
   const [textareaValue, setTextareaValue] = useState("");
-  const [copySuccess, setCopySuccess] = useState(false); 
+  const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
-    const updatedTextareaValue = `${props.nodesData.length} ${props.edgesData.length}\n${props.edgesData.map(edge => edge[0]+' '+edge[1]).join('\n')}`;
+    const updatedTextareaValue = `${props.nodesData.length} ${props.edgesData.length}\n${props.edgesData.map(edge => edge.join(' ')).join('\n')}`;
     setTextareaValue(updatedTextareaValue);
   }, [props.nodesData, props.edgesData]);
 
@@ -31,7 +31,42 @@ function GraphTextarea(props) {
       });
   };
 
-  const handleOutputTextarea = () => {
+  const handleGraphGenerate = () => {
+    const lines = textareaValue.split('\n');
+    const [N, M] = lines[0].split(' ').map(Number);
+    const nodes = Array.from({ length: N }, (_, index) => index + 1);
+    const edges = [];
+
+    lines.slice(1)
+      .forEach((line, index) => {
+        const nums = line.trim().split(' ');
+        if (nums.length !== 2) {
+          alert('グラフは以下の形式で与えてください。\nN M\nu_1 v_1\nu_2 v_2\n...\nu_M v_M');
+          throw new Error('Invalid input: Each line should contain two numbers.');
+        }
+        const [u, v] = nums.map(Number);
+        if (isNaN(u) || isNaN(v) || u < 1 || u > N || v < 1 || v > N) {
+          const lineNumber = index + 2; // 0-indexed lines
+          alert(`頂点番号は1以上N以下で指定してください\n${lineNumber}行目: ${u} ${v}`);
+          throw new Error(`Invalid input: Edge at line ${lineNumber} is incorrect.`);
+        }
+        edges.push([u, v]);
+      });
+
+    if (edges.length !== M) {
+      alert('グラフの辺の数がMと一致しません\n\nグラフは以下の形式で与えてください。\nN M\nu_1 v_1\nu_2 v_2\n...\nu_M v_M');
+      throw new Error('Invalid input: Edge count does not match M.');
+    }
+
+    props.setNodesData(nodes);
+    props.setEdgesData(edges);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault(); // デフォルトのEnterキーの動作を無効化
+      handleGraphGenerate(); // Draw Graphボタンの処理を呼び出す
+    }
   };
 
   return (
@@ -40,6 +75,7 @@ function GraphTextarea(props) {
         <textarea className="form-control"
           value={textareaValue}
           onChange={handleTextareaChange}
+          onKeyDown={handleKeyPress} // Ctrl+Enterを押したときの処理を追加
           style={{ width: '100%', height: '300px' }}
         />
         <button className="btn btn-primary" onClick={handleCopy} onMouseEnter={(e) => e.target.style.backgroundColor = 'lightgray'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'} style={{ position: 'absolute', top: '5px', right: '5px', backgroundColor: 'transparent', border: 'none', width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -47,7 +83,7 @@ function GraphTextarea(props) {
         </button>
       </div>
       <div className="d-flex justify-content-end">
-        <Button variant="primary" onClick={handleOutputTextarea}>
+        <Button variant="primary" onClick={handleGraphGenerate}>
           Draw Graph
         </Button>
       </div>
