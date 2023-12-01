@@ -72,7 +72,7 @@ const toggleNodePhysics = (nodes, nodeId) => {
   });
 };
 
-function DrawUndirectedGraph(props) {
+function DrawGraph(props) {
   const containerRef = useRef(null);
   const networkRef = useRef(null); // Networkコンポーネントへの参照を保持するためのref
   const lastSelectedNodeId = useRef(null);
@@ -193,4 +193,4 @@ function DrawUndirectedGraph(props) {
   
 }
 
-export default DrawUndirectedGraph;
+export default DrawGraph;
