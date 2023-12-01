@@ -80,6 +80,15 @@ function DrawUndirectedGraph(props) {
   useEffect(() => {
     const nodes = new DataSet();
     const edges = new DataSet();
+
+    props.nodesData.map(node => addNode(nodes, `${node}`, 0, 0));
+    props.edgesData.forEach(edge => {
+      const [label1, label2] = edge;
+      const id1 = nodes.getIds({ filter: node => node.label === `${label1}` })[0];
+      const id2 = nodes.getIds({ filter: node => node.label === `${label2}` })[0];
+      console.log(id1,id2);
+      addEdge(edges, id1, id2);
+    });
     
     const data = {
       nodes: nodes,
@@ -168,12 +177,13 @@ function DrawUndirectedGraph(props) {
     handleResize(); // 最初のレンダリング時にも呼び出す
   
     window.addEventListener('resize', handleResize); // 画面サイズ変更時に実行
-  
+
     return () => {
+      network.destroy();
       window.removeEventListener('resize', handleResize); // イベントリスナーのクリーンアップ
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.nodesData, props.edgesData]);
 
   return (
     <>

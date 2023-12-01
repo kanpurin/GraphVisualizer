@@ -5,22 +5,31 @@ import DrawUndirectedGraph from "./DrawUndirectedGraph";
 import GraphTextarea from "./GraphTextarea";
 
 function GraphGenerator() {
-  const [nodesData, setNodesData] = useState([]);
-  const [edgesData, setEdgesData] = useState([]);
+  const [drawNodesData, setDrawNodesData] = useState([]);
+  const [drawedgesData, setDrawEdgesData] = useState([]);
+  const [textNodesData, setTextNodesData] = useState([]);
+  const [textedgesData, setTextEdgesData] = useState([]);
 
-  const data = {
-    nodesData: nodesData,
-    setNodesData: setNodesData,
-    edgesData: edgesData,
-    setEdgesData: setEdgesData
+  const drawData = {
+    nodesData: drawNodesData,
+    setNodesData: setTextNodesData,
+    edgesData: drawedgesData,
+    setEdgesData: setTextEdgesData
+  };
+
+  const textData = {
+    nodesData: textNodesData,
+    setNodesData: setDrawNodesData,
+    edgesData: textedgesData,
+    setEdgesData: setDrawEdgesData
   };
 
 	return (
     <>
       <Usage />
       <div className="my-3 container" style={{ position: 'relative' }}>
-        <DrawUndirectedGraph {...data} />
-        <GraphTextarea {...data} />
+        <DrawUndirectedGraph {...drawData} />
+        <GraphTextarea {...textData} />
       </div>
     </>
 	)
