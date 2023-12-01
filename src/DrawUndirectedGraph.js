@@ -4,7 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import 'bootstrap/dist/css/bootstrap.min.css'; // BootstrapのCSSをインポート
 
 // ノードを追加する関数
-const addNode = (nodes, newNodeId, newNodeLabel, x, y) => {
+const addNode = (nodes, newNodeLabel, x, y) => {
+  const newNodeId = uuidv4();
   nodes.add([{
     id: newNodeId,
     label: newNodeLabel,
@@ -116,9 +117,8 @@ function DrawUndirectedGraph(props) {
       const clickedEdgeId = params.edges[0];
     
       if (clickedNodeId === undefined && clickedEdgeId === undefined) {
-        const newNodeId = uuidv4();
         const newNodeLabel = `${nodes.length + 1}`;
-        addNode(nodes, newNodeId, newNodeLabel, params.pointer.canvas.x, params.pointer.canvas.y);
+        addNode(nodes, newNodeLabel, params.pointer.canvas.x, params.pointer.canvas.y);
       } else {
         if (clickedNodeId !== undefined) {
           removeNode(nodes, edges, clickedNodeId);
