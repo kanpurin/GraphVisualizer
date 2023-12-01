@@ -34,7 +34,7 @@ function GraphTextarea(props) {
   };
 
   const handleGraphGenerate = () => {
-    const lines = textareaValue.split('\n');
+    const lines = textareaValue.split('\n').filter(line => line.trim() !== ''); // 空行を無視する
     const [N, M] = lines[0].split(' ').map(Number);
     const nodes = Array.from({ length: N }, (_, index) => index + 1);
     const edges = [];
