@@ -1,17 +1,94 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { v4 as uuidv4 } from 'uuid';
+import 'bootstrap/dist/css/bootstrap.min.css'; // BootstrapのCSSをインポート
 
-function DrawUndirectedGraph() {
+// ノードを追加する関数
+const addNode = (nodes, newNodeLabel, x, y) => {
+  const newNodeId = uuidv4();
+  nodes.add([{
+    id: newNodeId,
+    label: newNodeLabel,
+    x: x,
+    y: y,
+    physics: true,
+    color: {
+      border: '#000000',
+      background: '#FFFFFF',
+      highlight: {
+        border: '#000000',
+        background: '#FFFFFF'
+      },
+      hover: {
+        border: '#000000',
+        background: '#FFFFFF'
+      }
+    }
+  }]);
+};
+
+// 頂点を削除する関数
+const removeNode = (nodes, edges, nodeId) => {
+  const connectedEdges = edges.get({ filter: (edge) => edge.from === nodeId || edge.to === nodeId });
+  const deleteLabel = nodes.get(nodeId).label;
+
+  edges.remove(connectedEdges.map(edge => edge.id));
+  nodes.remove({ id: nodeId });
+
+  nodes.forEach((node) => {
+    if (node.label > deleteLabel) {
+      nodes.updateOnly({ id: node.id, label: `${node.label - 1}` });
+    }
+  });
+};
+
+// エッジを追加する関数
+const addEdge = (edges, fromNodeId, toNodeId) => {
+  edges.add({
+    color: { inherit: false },
+    from: fromNodeId,
+    to: toNodeId,
+  });
+};
+
+// エッジを削除する関数
+const removeEdge = (edges, edgeId) => {
+  edges.remove({ id: edgeId });
+};
+
+// ノードのphysicsを切り替える関数
+const toggleNodePhysics = (nodes, nodeId) => {
+  const node = nodes.get(nodeId);
+  const physics = !node.physics;
+  const colorBackground = physics ? '#FFFFFF' : '#AAAAAA';
+  nodes.update({
+    id: nodeId,
+    physics: physics,
+    color: {
+      background: colorBackground,
+      highlight: { background: colorBackground },
+      hover: { background: colorBackground }
+    }
+  });
+};
+
+function DrawUndirectedGraph(props) {
   const containerRef = useRef(null);
   const networkRef = useRef(null); // Networkコンポーネントへの参照を保持するためのref
-  const [nodesData, setNodesData] = useState([]);
-  const [edgesData, setEdgesData] = useState([]);
+  const lastSelectedNodeId = useRef(null);
 
   useEffect(() => {
     const nodes = new DataSet();
     const edges = new DataSet();
-    let lastSelectedNodeId = null;
+
+    props.nodesData.map(node => addNode(nodes, `${node}`, 0, 0));
+    props.edgesData.forEach(edge => {
+      const [label1, label2] = edge;
+      const id1 = nodes.getIds({ filter: node => node.label === `${label1}` })[0];
+      const id2 = nodes.getIds({ filter: node => node.label === `${label2}` })[0];
+      console.log(id1,id2);
+      addEdge(edges, id1, id2);
+    });
     
     const data = {
       nodes: nodes,
@@ -45,101 +122,50 @@ function DrawUndirectedGraph() {
     networkRef.current = network; // リファレンスをセットする
 
     network.on('doubleClick', function(params) {
-      if ((params.nodes.length === 0) && (params.edges.length === 0)) {
-        const newNodeId = uuidv4(); // UUIDを生成
-        const newNodeLabel = `${nodes.length + 1}`; // ラベルを設定
-        var updatedIds;
-        updatedIds = nodes.add([{
-          id: newNodeId, // 新しいノードのIDを設定
-          label: newNodeLabel,
-          x: params.pointer.canvas.x,
-          y: params.pointer.canvas.y,
-          physics: true,
-          color: {
-            border: '#000000',
-            background: '#FFFFFF',
-            highlight: {
-              border: '#000000',
-              background: '#FFFFFF'
-            },
-            hover: {
-              border: '#000000',
-              background: '#FFFFFF'
-            }
-          }
-        }]);
-        network.selectNodes([updatedIds[0]]);
-        network.editNode();
-        lastSelectedNodeId = newNodeId;
-      }
-      else {
-        const nodeId = params.nodes[0];
-        const edgeId = params.edges[0];
-        if (nodeId !== undefined) {
-          // ノードを削除すると同時に、接続されたエッジも削除
-          const connectedEdges = edges.get({ filter: (edge) => edge.from === nodeId || edge.to === nodeId });
-          const deleteLabel = nodes.get(nodeId).label;
-          edges.remove(connectedEdges.map(edge => edge.id));
-          nodes.remove({ id: nodeId });
-          // ノードが削除された後、削除されたIDより大きなIDを持つノードのIDを1つずつ減らす
-          nodes.forEach((node) => {
-            if (node.label > deleteLabel) {
-              nodes.updateOnly({ id: node.id, label: `${node.label-1}` });
-            }
-          });
-        } else if (edgeId !== undefined) {
-          edges.remove({ id: edgeId });
+      const clickedNodeId = params.nodes[0];
+      const clickedEdgeId = params.edges[0];
+    
+      if (clickedNodeId === undefined && clickedEdgeId === undefined) {
+        const newNodeLabel = `${nodes.length + 1}`;
+        addNode(nodes, newNodeLabel, params.pointer.canvas.x, params.pointer.canvas.y);
+      } else {
+        if (clickedNodeId !== undefined) {
+          removeNode(nodes, edges, clickedNodeId);
+        } else if (clickedEdgeId !== undefined) {
+          removeEdge(edges, clickedEdgeId);
         }
-        lastSelectedNodeId = undefined;
       }
+      lastSelectedNodeId.current = undefined;
     });
 
     network.on('click', function(params) {
       const nodeId = params.nodes[0];
-      if (params.event.srcEvent.ctrlKey) {
-        if (lastSelectedNodeId !== undefined && nodeId !== undefined) {
-          console.log('from:'+lastSelectedNodeId+" to:"+nodeId);
-          edges.add({
-            color: {inherit:false},
-            from: lastSelectedNodeId,
-            to: nodeId,
-          });
-        }
+      const ctrlKey = params.event.srcEvent.ctrlKey;
+      const shiftKey = params.event.srcEvent.shiftKey;
+    
+      if (ctrlKey && lastSelectedNodeId.current !== undefined && nodeId !== undefined) {
+        addEdge(edges, lastSelectedNodeId.current, nodeId);
+      } else if (shiftKey && nodeId !== undefined) {
+        toggleNodePhysics(nodes, nodeId);
       }
-      else if (params.event.srcEvent.shiftKey) {
-        if (nodeId !== undefined) {
-          const node = nodes.get(nodeId);
-          const physics = !node.physics;
-          const colorBackground = physics ? '#FFFFFF' : '#AAAAAA';
-          nodes.update({ id: nodeId, physics: physics, 
-            color: {
-              background: colorBackground,
-              highlight: { background: colorBackground },
-              hover: { background: colorBackground }
-            }
-          });
-        }
-      }
-      lastSelectedNodeId = nodeId;
+    
+      lastSelectedNodeId.current = nodeId;
     });
 
     // ノードが変更されたときのイベントリスナー
     nodes.on("*", () => {
-      setNodesData(nodes.get());
+      const newNodes = [];
+      nodes.get().map(node => newNodes.push(node.label));
+      props.setNodesData(newNodes);
     });
 
     // エッジが変更されたときのイベントリスナー
     edges.on("*", () => {
-      setEdgesData(edges.get());
+      const newEdges = [];
+      edges.get().map(edge => newEdges.push([nodes.get(edge.from).label,nodes.get(edge.to).label]));
+      props.setEdgesData(newEdges);
     });
 
-    return () => {
-      // Cleanup code here if needed
-    };
-  }, []);
-
-  
-  useEffect(() => {
     const handleResize = () => {
       if (window.innerHeight > window.innerWidth) {
         networkRef.current.setOptions({ manipulation: { enabled: true } });
@@ -151,34 +177,18 @@ function DrawUndirectedGraph() {
     handleResize(); // 最初のレンダリング時にも呼び出す
   
     window.addEventListener('resize', handleResize); // 画面サイズ変更時に実行
-  
+
     return () => {
+      network.destroy();
       window.removeEventListener('resize', handleResize); // イベントリスナーのクリーンアップ
     };
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.nodesData, props.edgesData]);
 
   return (
-    <div className="container">
-      <div className="my-3 border" id="mynetwork" ref={containerRef} style={{ height: '400px', borderRadius: '10px' }}></div>
-      <div className="input-group my-3" style={{ flex: '1', overflow: 'auto'}}>
-        <textarea className="form-control"
-          value={`${nodesData.length} ${edgesData.length}\n${edgesData.map(edge => {
-            const fromNode = nodesData.find(node => node.id === edge.from);
-            const toNode = nodesData.find(node => node.id === edge.to);
-            const fromLabel = fromNode ? fromNode.label : '';
-            const toLabel = toNode ? toNode.label : '';
-            return `${fromLabel} ${toLabel}`;
-          }).join('\n')}`}
-          onChange={(e) => {
-            // textareaの内容を処理するための処理
-            const text = e.target.value;
-            const lines = text.split('\n');
-            console.log(lines);
-          }}
-          style={{ width: '100%', height: '300px' }}
-        />
-      </div>
-    </div>
+    <>
+      <div className="my-1 border" id="mynetwork" ref={containerRef} style={{ height: '400px', borderRadius: '10px' }}></div>
+    </>
   );
   
 }
