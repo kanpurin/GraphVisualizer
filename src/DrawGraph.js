@@ -43,9 +43,10 @@ const removeNode = (nodes, edges, nodeId) => {
 };
 
 // エッジを追加する関数
-const addEdge = (edges, fromNodeId, toNodeId) => {
+const addEdge = (edges, fromNodeId, toNodeId, isDirected) => {
   edges.add({
     color: { inherit: false },
+		arrows: { to: { enabled: isDirected } },
     from: fromNodeId,
     to: toNodeId,
   });
@@ -72,10 +73,22 @@ const toggleNodePhysics = (nodes, nodeId) => {
   });
 };
 
-function DrawUndirectedGraph(props) {
+function DrawGraph(props) {
   const containerRef = useRef(null);
   const networkRef = useRef(null); // Networkコンポーネントへの参照を保持するためのref
   const lastSelectedNodeId = useRef(null);
+  const isDirected = useRef(false);
+
+	// チェックボックスの変更イベントハンドラ
+	const handleCheckboxChange = (e) => {
+		isDirected.current = e.target.checked;
+		const edges = networkRef.current.body.data.edges;
+		const newEdges = edges.get().map((edge) => {
+			edge.arrows = { to: { enabled: isDirected.current } }; // 有向グラフの場合は矢印を有効化
+			return edge;
+		});
+		edges.update(newEdges);
+	};
 
   useEffect(() => {
     const nodes = new DataSet();
@@ -87,7 +100,7 @@ function DrawUndirectedGraph(props) {
       const id1 = nodes.getIds({ filter: node => node.label === `${label1}` })[0];
       const id2 = nodes.getIds({ filter: node => node.label === `${label2}` })[0];
       console.log(id1,id2);
-      addEdge(edges, id1, id2);
+      addEdge(edges, id1, id2, isDirected.current);
     });
     
     const data = {
@@ -144,7 +157,7 @@ function DrawUndirectedGraph(props) {
       const shiftKey = params.event.srcEvent.shiftKey;
     
       if (ctrlKey && lastSelectedNodeId.current !== undefined && nodeId !== undefined) {
-        addEdge(edges, lastSelectedNodeId.current, nodeId);
+        addEdge(edges, lastSelectedNodeId.current, nodeId, isDirected.current);
       } else if (shiftKey && nodeId !== undefined) {
         toggleNodePhysics(nodes, nodeId);
       }
@@ -187,10 +200,16 @@ function DrawUndirectedGraph(props) {
 
   return (
     <>
+			<div className="form-check">
+				<input className="form-check-input" type="checkbox" ref={isDirected} onChange={handleCheckboxChange} />
+				<label className="form-check-label">
+					有向グラフ
+				</label>
+			</div>
       <div className="my-1 border" id="mynetwork" ref={containerRef} style={{ height: '400px', borderRadius: '10px' }}></div>
     </>
   );
   
 }
 
-export default DrawUndirectedGraph;
+export default DrawGraph;

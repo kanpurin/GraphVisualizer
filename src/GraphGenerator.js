@@ -1,7 +1,7 @@
 /* eslint no-undef: 0 */
 import React, { useState } from "react";
 import Usage from "./Usage";
-import DrawUndirectedGraph from "./DrawUndirectedGraph";
+import DrawGraph from "./DrawGraph";
 import GraphTextarea from "./GraphTextarea";
 
 function GraphGenerator() {
@@ -28,7 +28,7 @@ function GraphGenerator() {
     <>
       <Usage />
       <div className="my-3 container" style={{ position: 'relative' }}>
-        <DrawUndirectedGraph {...drawData} />
+        <DrawGraph {...drawData} />
         <GraphTextarea {...textData} />
       </div>
     </>
