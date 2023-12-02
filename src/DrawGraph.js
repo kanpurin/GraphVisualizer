@@ -80,7 +80,7 @@ function DrawGraph(props) {
   const isDirected = useRef(false);
 
 	// チェックボックスの変更イベントハンドラ
-	const handleCheckboxChange = (e) => {
+	const handleDirectedGraphChange = (e) => {
 		isDirected.current = e.target.checked;
 		const edges = networkRef.current.body.data.edges;
 		const newEdges = edges.get().map((edge) => {
@@ -119,6 +119,14 @@ function DrawGraph(props) {
         font: {
           size: 20
         }
+      },
+      physics: {
+        barnesHut: {
+          gravitationalConstant: -5400,
+          centralGravity: 1,
+          springLength: 95,
+          springConstant: 0.02
+        },
       },
     };
 
@@ -271,7 +279,7 @@ function DrawGraph(props) {
   return (
     <>
 			<div className="form-check">
-				<input className="form-check-input" type="checkbox" ref={isDirected} onChange={handleCheckboxChange} />
+				<input className="form-check-input" type="checkbox" ref={isDirected} onChange={handleDirectedGraphChange} />
 				<label className="form-check-label">
 					有向グラフ
 				</label>
