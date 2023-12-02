@@ -30,7 +30,7 @@ function Header() {
         </Offcanvas.Header>
         <Offcanvas.Body>
           <Nav className="flex-column">
-            <Nav.Link href="/GraphVisualizer">Home</Nav.Link>
+            <Nav.Link href="/GraphVisualizer/">Home</Nav.Link>
             <Nav.Link href="/GraphVisualizer/network-graph" style={linkStyle}>Network Graph</Nav.Link>
             <Nav.Link href="/GraphVisualizer/2d-graph" style={linkStyle}>2D Graph</Nav.Link>
             <Nav.Link href="/GraphVisualizer/about">About</Nav.Link>
