@@ -166,7 +166,14 @@ function DrawGraph(props) {
     // エッジが変更されたときのイベントリスナー
     edges.on("*", () => {
       const newEdges = [];
-      edges.get().map(edge => newEdges.push([nodes.get(edge.from).label,nodes.get(edge.to).label]));
+      console.log(nodes);
+      console.log(edges);
+      edges.get().map(edge => {
+        console.log(edge.from);
+        const fromLabel = nodes.get(edge.from).label;
+        const toLabel = nodes.get(edge.to).label;
+        newEdges.push([fromLabel, toLabel]);
+      });
       props.setEdgesData(newEdges);
     });
 
@@ -232,16 +239,6 @@ function DrawGraph(props) {
       }
     });
 
-    // edgesにあってexistingEdgesにないedgeをcurrentに追加
-    edges.forEach(edge => {
-      const existingEdge = existingEdges.find(e =>
-        (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from)
-      );
-      if (!existingEdge) {
-        networkRef.current.body.data.edges.add(edge);
-      }
-    });
-    
     // existingNodesにあってnodesDataにないnodeをcurrentから削除
     existingNodes.forEach(node => {
       const existingNode = props.nodesData.find(nodeLabel => node.label === `${nodeLabel}`);
@@ -255,6 +252,16 @@ function DrawGraph(props) {
       const nonexistingNode = !existingNodes.find(n => n.id === node.id);
       if (nonexistingNode) {
         networkRef.current.body.data.nodes.add(node);
+      }
+    });
+
+    // edgesにあってexistingEdgesにないedgeをcurrentに追加
+    edges.forEach(edge => {
+      const existingEdge = existingEdges.find(e =>
+        (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from)
+      );
+      if (!existingEdge) {
+        networkRef.current.body.data.edges.add(edge);
       }
     });
 
