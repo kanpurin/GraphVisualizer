@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import './App.css';
 import Header from "./Header";
 import Footer from "./Footer";
@@ -10,7 +10,7 @@ import NotFound from "./NotFound";
 function App() {
   return (
 		<div>
-      <Router basename={process.env.PUBLIC_URL}>
+      <Router>
         <Header />
         <Routes>
           <Route exact path="/" element={<GraphGenerator />} />
