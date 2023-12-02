@@ -4,7 +4,7 @@ import './App.css';
 import Header from "./Header";
 import Footer from "./Footer";
 // import About from "./About"; // Aboutページのインポート
-import GraphGenerator from "./GraphGenerator";
+import GraphGenerator from "./GraphNetworkGenerator";
 import NotFound from "./NotFound";
 
 function App() {

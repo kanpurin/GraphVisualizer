@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Usage from "./Usage";
 import DrawGraph from "./DrawGraph";
-import GraphTextarea from "./GraphTextarea";
+import GraphTextarea from "./GraphNetworkTextarea";
 
 function GraphGenerator() {
   const [drawNodesData, setDrawNodesData] = useState([]);
