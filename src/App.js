@@ -14,7 +14,7 @@ function App() {
         <Header />
         <Routes>
           {/* <Route path="/GraphVisualizer/about" element={<About />} /> */}
-          <Route path="/" element={<GraphGenerator />} />
+          <Route exact path="/" element={<GraphGenerator />} />
           <Route path="/network-graph" element={<GraphGenerator />} />
           <Route path="/2d-graph" element={<GraphGenerator />} />
           <Route path="*" element={<NotFound />} />
