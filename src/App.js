@@ -13,11 +13,11 @@ function App() {
       <Router basename={process.env.PUBLIC_URL}>
         <Header />
         <Routes>
-          {/* <Route path="/GraphVisualizer/about" element={<About />} /> */}
           <Route exact path="/" element={<GraphGenerator />} />
           <Route path="/network-graph" element={<GraphGenerator />} />
           <Route path="/2d-graph" element={<GraphGenerator />} />
           <Route path="*" element={<NotFound />} />
+          {/* <Route path="/GraphVisualizer/about" element={<About />} /> */}
         </Routes>
         <Footer />
       </Router>
