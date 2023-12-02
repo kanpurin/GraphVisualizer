@@ -168,7 +168,7 @@ function DrawGraph(props) {
       const newEdges = [];
       console.log(nodes);
       console.log(edges);
-      edges.get().map(edge => {
+      edges.get().forEach(edge => {
         console.log(edge.from);
         const fromLabel = nodes.get(edge.from).label;
         const toLabel = nodes.get(edge.to).label;
