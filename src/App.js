@@ -10,13 +10,13 @@ import NotFound from "./NotFound";
 function App() {
   return (
 		<div>
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <Header />
         <Routes>
           {/* <Route path="/GraphVisualizer/about" element={<About />} /> */}
-          <Route path="/GraphVisualizer/" element={<GraphGenerator />} />
-          <Route path="/GraphVisualizer/network-graph" element={<GraphGenerator />} />
-          <Route path="/GraphVisualizer/2d-graph" element={<GraphGenerator />} />
+          <Route path="/" element={<GraphGenerator />} />
+          <Route path="/network-graph" element={<GraphGenerator />} />
+          <Route path="/2d-graph" element={<GraphGenerator />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
