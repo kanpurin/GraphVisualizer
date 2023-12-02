@@ -1,16 +1,28 @@
 /* eslint no-undef: 0 */
 import React from "react";
 
-function Footer({content}) {
+function Footer() {
+  const twitterLink = "https://twitter.com/kanpurin_"; // Twitterのリンク
+  const blogLink = "https://kanpurin.hatenablog.com/"; // blogのリンク
+
   return (
-		<div className="bg-primary">
-      <footer className="py-3">
-        <ul className="nav justify-content-end border-top pb-3 mb-3">
-          <li className="nav-item"><a href="https://github.com/kanpurin/GraphVisualizer" className="nav-link px-2 text-white">GitHub</a></li>
-          </ul>
-      </footer>
-    </div>
+    <footer className="bg-primary text-white py-3">
+      <div className="container">
+        <ul className="nav justify-content-end pt-3">
+          <li className="nav-item">
+            <a href={twitterLink} className="nav-link px-2 text-white" target="_blank" rel="noopener noreferrer">
+              Twitter
+            </a>
+          </li>
+          <li className="nav-item">
+            <a href={blogLink} className="nav-link px-2 text-white" target="_blank" rel="noopener noreferrer">
+              blog
+            </a>
+          </li>
+        </ul>
+      </div>
+    </footer>
   );
 }
 
-export default Footer
+export default Footer;
