@@ -26,8 +26,8 @@ function GraphGenerator() {
 
 	return (
     <>
-      <Usage />
       <div className="my-3 container" style={{ position: 'relative' }}>
+        <Usage />
         <DrawGraph {...drawData} />
         <GraphTextarea {...textData} />
       </div>
