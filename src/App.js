@@ -13,10 +13,10 @@ function App() {
       <Router>
         <Header />
         <Routes>
-          {/* <Route path="/about" element={<About />} /> */}
-          <Route path="/" element={<GraphGenerator />} />
-          <Route path="/network-graph" element={<GraphGenerator />} />
-          <Route path="/2d-graph" element={<GraphGenerator />} />
+          {/* <Route path="/GraphVisualizer/about" element={<About />} /> */}
+          <Route exact path="/GraphVisualizer" element={<GraphGenerator />} />
+          <Route path="/GraphVisualizer/network-graph" element={<GraphGenerator />} />
+          <Route path="/GraphVisualizer/2d-graph" element={<GraphGenerator />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
