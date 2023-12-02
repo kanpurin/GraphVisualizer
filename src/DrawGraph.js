@@ -284,7 +284,7 @@ function DrawGraph(props) {
 					有向グラフ
 				</label>
 			</div>
-      <div className="my-1 border" id="mynetwork" ref={containerRef} style={{ height: '400px', borderRadius: '10px' }}></div>
+      <div className="my-1 border" id="mynetwork" ref={containerRef} style={{ height: '400px', borderRadius: '10px', resize: 'vertical', overflow: 'auto' }}></div>
     </>
   );
   
