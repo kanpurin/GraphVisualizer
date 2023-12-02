@@ -94,15 +94,6 @@ function DrawGraph(props) {
     const nodes = new DataSet();
     const edges = new DataSet();
 
-    props.nodesData.map(node => addNode(nodes, `${node}`, 0, 0));
-    props.edgesData.forEach(edge => {
-      const [label1, label2] = edge;
-      const id1 = nodes.getIds({ filter: node => node.label === `${label1}` })[0];
-      const id2 = nodes.getIds({ filter: node => node.label === `${label2}` })[0];
-      console.log(id1,id2);
-      addEdge(edges, id1, id2, isDirected.current);
-    });
-    
     const data = {
       nodes: nodes,
       edges: edges,
@@ -175,7 +166,14 @@ function DrawGraph(props) {
     // エッジが変更されたときのイベントリスナー
     edges.on("*", () => {
       const newEdges = [];
-      edges.get().map(edge => newEdges.push([nodes.get(edge.from).label,nodes.get(edge.to).label]));
+      console.log(nodes);
+      console.log(edges);
+      edges.get().map(edge => {
+        console.log(edge.from);
+        const fromLabel = nodes.get(edge.from).label;
+        const toLabel = nodes.get(edge.to).label;
+        newEdges.push([fromLabel, toLabel]);
+      });
       props.setEdgesData(newEdges);
     });
 
@@ -196,8 +194,80 @@ function DrawGraph(props) {
       window.removeEventListener('resize', handleResize); // イベントリスナーのクリーンアップ
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.nodesData, props.edgesData]);
+  }, []);
 
+  useEffect(() => {
+    const nodes = new DataSet();
+    const edges = new DataSet();
+    const existingNodes = networkRef.current.body.data.nodes.get();
+    const existingEdges = networkRef.current.body.data.edges.get();
+
+    // nodesDataにあってexistingNodesにないnodeをnodesに追加
+    props.nodesData.forEach(nodeLabel => {
+      const existingNode = existingNodes.find(node => node.label === `${nodeLabel}`);
+      if (existingNode) {
+        nodes.add(existingNode);
+      } else {
+        addNode(nodes, `${nodeLabel}`, 0, 0);
+      }
+    });
+
+    // edgesDataにあってexistingEdgesにないedgeをcurrentに追加
+    props.edgesData.forEach(edge => {
+    const [label1, label2] = edge;
+    const id1 = nodes.getIds({ filter: node => node.label === `${label1}` })[0];
+    const id2 = nodes.getIds({ filter: node => node.label === `${label2}` })[0];
+    if (id1 !== undefined && id2 !== undefined) {
+      const existingEdge = existingEdges.find(e =>
+        (e.from === id1 && e.to === id2) || (e.from === id2 && e.to === id1)
+        );
+        if (!existingEdge) {
+          addEdge(edges, id1, id2, isDirected.current);
+        }
+      }
+    });
+
+    // existingEdgesにあってedgesDataにないedgeをcurrentから削除
+    existingEdges.forEach(edge => {
+      const existingEdge = props.edgesData.find(e => {
+        const fromLabel = existingNodes.find(node => node.id === edge.from).label;
+        const toLabel = existingNodes.find(node => node.id === edge.to).label;
+        return fromLabel === `${e[0]}` && toLabel === `${e[1]}`
+      });
+      if (!existingEdge) {
+        networkRef.current.body.data.edges.remove(edge);
+      }
+    });
+
+    // existingNodesにあってnodesDataにないnodeをcurrentから削除
+    existingNodes.forEach(node => {
+      const existingNode = props.nodesData.find(nodeLabel => node.label === `${nodeLabel}`);
+      if (!existingNode) {
+        networkRef.current.body.data.nodes.remove(node);
+      }
+    });
+
+    // nodesにあってexistingNodesにないnodeをcurrentに追加
+    nodes.forEach(node => {
+      const nonexistingNode = !existingNodes.find(n => n.id === node.id);
+      if (nonexistingNode) {
+        networkRef.current.body.data.nodes.add(node);
+      }
+    });
+
+    // edgesにあってexistingEdgesにないedgeをcurrentに追加
+    edges.forEach(edge => {
+      const existingEdge = existingEdges.find(e =>
+        (e.from === edge.from && e.to === edge.to) || (e.from === edge.to && e.to === edge.from)
+      );
+      if (!existingEdge) {
+        networkRef.current.body.data.edges.add(edge);
+      }
+    });
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.nodesData, props.edgesData]);
+      
   return (
     <>
 			<div className="form-check">
