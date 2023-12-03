@@ -5,7 +5,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 // import About from "./About"; // Aboutページのインポート
 import GraphGenerator from "./GraphNetworkGenerator";
-import DrawGraph2d from "./DrawGraph2d";
+import Graph2dGenerator from "./Graph2dGenerator";
 import NotFound from "./NotFound";
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
         <Routes>
           <Route exact path="/" element={<GraphGenerator />} />
           <Route path="/network-graph" element={<GraphGenerator />} />
-          <Route path="/2d-graph" element={<DrawGraph2d />} />
+          <Route path="/2d-graph" element={<Graph2dGenerator />} />
           <Route path="*" element={<NotFound />} />
           {/* <Route path="/GraphVisualizer/about" element={<About />} /> */}
         </Routes>
