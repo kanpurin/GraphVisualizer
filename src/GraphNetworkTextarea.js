@@ -1,12 +1,10 @@
 /* eslint no-undef: 0 */
 import React, { useState, useEffect } from "react";
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faClipboard } from '@fortawesome/free-solid-svg-icons';
+import CopyButton from "./CopyButton";
 
 function GraphNetworkTextarea(props) {
   const [textareaValue, setTextareaValue] = useState("");
-  const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
     console.log(`nodesData :\n${props.nodesData.join(' ')}`);
@@ -17,20 +15,6 @@ function GraphNetworkTextarea(props) {
 
   const handleTextareaChange = (e) => {
     setTextareaValue(e.target.value); // ユーザーの入力をtextareaValueに反映
-  };
-
-  const handleCopy = () => {
-    setCopySuccess(false);
-    navigator.clipboard.writeText(textareaValue)
-      .then(() => {
-        setCopySuccess(true);
-        setTimeout(() => {
-          setCopySuccess(false);
-        }, 1500);
-      })
-      .catch(err => {
-        console.error('Failed to copy: ', err);
-      });
   };
 
   const handleGraphGenerate = () => {
@@ -80,9 +64,7 @@ function GraphNetworkTextarea(props) {
           onKeyDown={handleKeyPress} // Ctrl+Enterを押したときの処理を追加
           style={{ width: '100%', height: '300px' }}
         />
-        <button className="btn btn-primary" onClick={handleCopy} onMouseEnter={(e) => e.target.style.backgroundColor = 'lightgray'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'} style={{ position: 'absolute', top: '5px', right: '5px', backgroundColor: 'transparent', border: 'none', width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <FontAwesomeIcon icon={copySuccess ? faCheckCircle : faClipboard} style={{ color: 'gray', fontSize: '1em' }}/>
-        </button>
+        <CopyButton text={textareaValue}/>
       </div>
       <div className="d-flex justify-content-end">
         <Button variant="primary" onClick={handleGraphGenerate}>
