@@ -1,10 +1,10 @@
 /* eslint no-undef: 0 */
 import React, { useState } from "react";
-import Usage from "./Usage";
-import DrawGraph from "./DrawGraph";
-import GraphTextarea from "./GraphNetworkTextarea";
+import UsageGraphNetwork from "./UsageGraphNetwork";
+import DrawGraphNetwork from "./DrawGraphNetwork";
+import GraphNetworkTextarea from "./GraphNetworkTextarea";
 
-function GraphGenerator() {
+function GraphNetworkGenerator() {
   const [drawNodesData, setDrawNodesData] = useState([]);
   const [drawedgesData, setDrawEdgesData] = useState([]);
   const [textNodesData, setTextNodesData] = useState([]);
@@ -27,12 +27,12 @@ function GraphGenerator() {
 	return (
     <>
       <div className="my-3 container" style={{ position: 'relative' }}>
-        <Usage />
-        <DrawGraph {...drawData} />
-        <GraphTextarea {...textData} />
+        <UsageGraphNetwork />
+        <DrawGraphNetwork {...drawData} />
+        <GraphNetworkTextarea {...textData} />
       </div>
     </>
 	)
 }
 
-export default GraphGenerator;
+export default GraphNetworkGenerator;

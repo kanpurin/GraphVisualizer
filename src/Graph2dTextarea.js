@@ -7,11 +7,10 @@ function GraphNetworkTextarea(props) {
   const [textareaValue, setTextareaValue] = useState("");
 
   useEffect(() => {
-    console.log(`nodesData :\n${props.nodesData.join(' ')}`);
-    console.log(`edgesData :\n${props.edgesData.map(edge=>edge.join(' ')).join('\n')}`);
-    const updatedTextareaValue = `${props.nodesData.length} ${props.edgesData.length}\n${props.edgesData.map(edge => edge.join(' ')).join('\n')}`;
+    console.log(`pointsData :\n${props.pointsData.map(point=>`${point.x} ${point.y}`).join('\n')}`);
+    const updatedTextareaValue = `${props.pointsData.length}\n${props.pointsData.map(point=>`${point.x} ${point.y}`).join('\n')}`;
     setTextareaValue(updatedTextareaValue);
-  }, [props.nodesData, props.edgesData]);
+  }, [props.pointsData]);
 
   const handleTextareaChange = (e) => {
     setTextareaValue(e.target.value); // ユーザーの入力をtextareaValueに反映
@@ -19,33 +18,27 @@ function GraphNetworkTextarea(props) {
 
   const handleGraphGenerate = () => {
     const lines = textareaValue.split('\n').filter(line => line.trim() !== ''); // 空行を無視する
-    const [N, M] = lines[0].split(' ').map(Number);
-    const nodes = Array.from({ length: N }, (_, index) => index + 1);
-    const edges = [];
+    const N = Number(lines[0]);
+    const points = [];
 
     lines.slice(1)
       .forEach((line, index) => {
         const nums = line.trim().split(' ');
         const lineNumber = index + 2; // 0-indexed lines
-        const [u, v] = nums.map(Number);
-        if (nums.length !== 2) {
-          alert(`Invalid input: ${lineNumber}行目\n\nグラフは以下の形式で与えてください。\nN (M)\nu_1 v_1\nu_2 v_2\n...\nu_M v_M`);
+        const [x, y] = nums.map(Number);
+        if (nums.length !== 2 || isNaN(x) || isNaN(y)) {
+          alert(`Invalid input: ${lineNumber}行目\n\nグラフは以下の形式で与えてください。\nN\nx_1 y_1\nx_2 y_2\n...\nx_N y_N`);
           throw new Error('Invalid input: Each line should contain two numbers.');
         }
-        if (isNaN(u) || isNaN(v) || u < 1 || u > N || v < 1 || v > N) {
-          alert(`Invalid input: ${lineNumber}行目\n\n頂点番号は1以上N以下で指定してください`);
-          throw new Error(`Invalid input: Edge at line ${lineNumber} is incorrect.`);
-        }
-        edges.push([u, v]);
+        points.push({ x: x, y: y });
       });
 
-    if (M !== undefined && edges.length !== M) {
-      alert(`グラフの辺の数(${edges.length})がM(${M})と一致しません\n\nグラフは以下の形式で与えてください。\nN (M)\nu_1 v_1\nu_2 v_2\n...\nu_M v_M`);
-      throw new Error('Invalid input: Edge count does not match M.');
+    if (points.length !== N) {
+      alert(`点の数(${points.length})がN(${N})と一致しません\n\nグラフは以下の形式で与えてください。\nN\nx_1 y_1\nx_2 y_2\n...\nx_N y_N`);
+      throw new Error('Invalid input: Point count does not match N.');
     }
 
-    props.setNodesData(nodes);
-    props.setEdgesData(edges);
+    props.setPointsData(points);
   };
 
   const handleKeyPress = (e) => {
@@ -64,7 +57,7 @@ function GraphNetworkTextarea(props) {
           onKeyDown={handleKeyPress} // Ctrl+Enterを押したときの処理を追加
           style={{ width: '100%', height: '300px' }}
         />
-        <CopyButton text={textareaValue}/>
+        <CopyButton />
       </div>
       <div className="d-flex justify-content-end">
         <Button variant="primary" onClick={handleGraphGenerate}>

@@ -73,7 +73,7 @@ const toggleNodePhysics = (nodes, nodeId) => {
   });
 };
 
-function DrawGraph(props) {
+function DrawGraphNetwork(props) {
   const containerRef = useRef(null);
   const networkRef = useRef(null); // Networkコンポーネントへの参照を保持するためのref
   const lastSelectedNodeId = useRef(null);
@@ -290,4 +290,4 @@ function DrawGraph(props) {
   
 }
 
-export default DrawGraph;
+export default DrawGraphNetwork;

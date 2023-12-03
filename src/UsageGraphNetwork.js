@@ -1,7 +1,7 @@
 /* eslint no-undef: 0 */
 import React from "react";
 
-function Usage({content}) {
+function UsageGraphNetwork({content}) {
   return (
     <div className="container">
       <ul className="list-unstyled">
@@ -15,4 +15,4 @@ function Usage({content}) {
   );
 }
 
-export default Usage
+export default UsageGraphNetwork;
