@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faClipboard } from '@fortawesome/free-solid-svg-icons';
 
-function GraphTextarea(props) {
+function GraphNetworkTextarea(props) {
   const [textareaValue, setTextareaValue] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
 
@@ -93,4 +93,4 @@ function GraphTextarea(props) {
   )
 }
 
-export default GraphTextarea;
+export default GraphNetworkTextarea;

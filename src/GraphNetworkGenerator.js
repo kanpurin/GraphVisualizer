@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Usage from "./Usage";
 import DrawGraphNetwork from "./DrawGraphNetwork";
-import GraphTextarea from "./GraphNetworkTextarea";
+import GraphNetworkTextarea from "./GraphNetworkTextarea";
 
 function GraphNetworkGenerator() {
   const [drawNodesData, setDrawNodesData] = useState([]);
@@ -29,7 +29,7 @@ function GraphNetworkGenerator() {
       <div className="my-3 container" style={{ position: 'relative' }}>
         <Usage />
         <DrawGraphNetwork {...drawData} />
-        <GraphTextarea {...textData} />
+        <GraphNetworkTextarea {...textData} />
       </div>
     </>
 	)
