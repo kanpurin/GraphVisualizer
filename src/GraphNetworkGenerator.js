@@ -1,6 +1,6 @@
 /* eslint no-undef: 0 */
 import React, { useState } from "react";
-import Usage from "./Usage";
+import UsageGraphNetwork from "./UsageGraphNetwork";
 import DrawGraphNetwork from "./DrawGraphNetwork";
 import GraphNetworkTextarea from "./GraphNetworkTextarea";
 
@@ -27,7 +27,7 @@ function GraphNetworkGenerator() {
 	return (
     <>
       <div className="my-3 container" style={{ position: 'relative' }}>
-        <Usage />
+        <UsageGraphNetwork />
         <DrawGraphNetwork {...drawData} />
         <GraphNetworkTextarea {...textData} />
       </div>
