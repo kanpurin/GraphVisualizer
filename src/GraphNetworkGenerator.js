@@ -4,7 +4,7 @@ import Usage from "./Usage";
 import DrawGraphNetwork from "./DrawGraphNetwork";
 import GraphTextarea from "./GraphNetworkTextarea";
 
-function GraphGenerator() {
+function GraphNetworkGenerator() {
   const [drawNodesData, setDrawNodesData] = useState([]);
   const [drawedgesData, setDrawEdgesData] = useState([]);
   const [textNodesData, setTextNodesData] = useState([]);
@@ -35,4 +35,4 @@ function GraphGenerator() {
 	)
 }
 
-export default GraphGenerator;
+export default GraphNetworkGenerator;
