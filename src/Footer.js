@@ -3,7 +3,6 @@ import React from "react";
 
 function Footer() {
   const twitterLink = "https://twitter.com/kanpurin_"; // Twitterのリンク
-  const blogLink = "https://kanpurin.hatenablog.com/"; // blogのリンク
 
   return (
     <footer className="bg-primary text-white py-3">
