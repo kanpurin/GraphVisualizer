@@ -13,11 +13,6 @@ function Footer() {
               Twitter
             </a>
           </li>
-          <li className="nav-item">
-            <a href={blogLink} className="nav-link px-2 text-white" target="_blank" rel="noopener noreferrer">
-              blog
-            </a>
-          </li>
         </ul>
       </div>
     </footer>
