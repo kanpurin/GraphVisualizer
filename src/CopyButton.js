@@ -22,7 +22,7 @@ function CopyButton(props) {
 
   return (
     <button className="btn btn-primary" onClick={handleCopy} onMouseEnter={(e) => e.target.style.backgroundColor = 'lightgray'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'} style={{ position: 'absolute', top: '5px', right: '5px', backgroundColor: 'transparent', border: 'none', width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <FontAwesomeIcon icon={copySuccess ? faCheckCircle : faClipboard} style={{ color: 'gray', fontSize: '1em' }}/>
+      <FontAwesomeIcon icon={copySuccess ? faCheckCircle : faClipboard} style={{ color: 'gray', fontSize: '1em' }}/>
     </button>
   )
 }
