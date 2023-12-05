@@ -57,7 +57,7 @@ function GraphNetworkTextarea(props) {
           onKeyDown={handleKeyPress} // Ctrl+Enterを押したときの処理を追加
           style={{ width: '100%', height: '300px' }}
         />
-        <CopyButton />
+        <CopyButton text={textareaValue}/>
       </div>
       <div className="d-flex justify-content-end">
         <Button variant="primary" onClick={handleGraphGenerate}>
