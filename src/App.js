@@ -1,12 +1,12 @@
 import React from "react";
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import './App.css';
-import Header from "./Header";
-import Footer from "./Footer";
-// import About from "./About"; // Aboutページのインポート
-import GraphGenerator from "./GraphNetworkGenerator";
-import Graph2dGenerator from "./Graph2dGenerator";
-import NotFound from "./NotFound";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+// import About from "./components/About"; // Aboutページのインポート
+import GraphGenerator from "./components/GraphNetworkGenerator";
+import Graph2dGenerator from "./components/Graph2dGenerator";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
