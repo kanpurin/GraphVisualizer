@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from 'react-bootstrap';
 import CopyButton from "./CopyButton";
+import styles from "./GraphNetworkTextarea.module.css";
 
 function GraphNetworkTextarea(props) {
   const [textareaValue, setTextareaValue] = useState("");
@@ -58,11 +59,10 @@ function GraphNetworkTextarea(props) {
   return (
     <>
       <div className="my-1 position-relative">
-        <textarea className="form-control"
+        <textarea className={"form-control " + styles["form-control"]}
           value={textareaValue}
           onChange={handleTextareaChange}
           onKeyDown={handleKeyPress} // Ctrl+Enterを押したときの処理を追加
-          style={{ width: '100%', height: '300px' }}
         />
         <CopyButton text={textareaValue}/>
       </div>

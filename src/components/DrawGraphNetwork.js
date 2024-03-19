@@ -164,15 +164,8 @@ function DrawGraphNetwork(props) {
       lastSelectedNodeId.current = nodeId;
     });
 
-    // ノードが変更されたときのイベントリスナー
-    nodes.on("*", () => {
-      const newNodes = [];
-      nodes.get().map(node => newNodes.push(node.label));
-      props.setNodesData(newNodes);
-    });
-
-    // エッジが変更されたときのイベントリスナー
-    edges.on("*", () => {
+    // エッジを更新する関数
+    const updateEdge = () => {
       const newEdges = [];
       console.log(nodes);
       console.log(edges);
@@ -183,6 +176,20 @@ function DrawGraphNetwork(props) {
         newEdges.push([fromLabel, toLabel]);
       });
       props.setEdgesData(newEdges);
+    }; 
+
+    // ノードが変更されたときのイベントリスナー
+    nodes.on("*", () => {
+      const newNodes = [];
+      nodes.get().map(node => newNodes.push(node.label));
+      props.setNodesData(newNodes);
+      // ノードの変更に追従してエッジも更新
+      updateEdge();
+    });
+
+    // エッジが変更されたときのイベントリスナー
+    edges.on("*", () => {
+      updateEdge();
     });
 
     const handleResize = () => {
