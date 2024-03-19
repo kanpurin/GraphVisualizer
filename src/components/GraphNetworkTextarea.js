@@ -59,7 +59,7 @@ function GraphNetworkTextarea(props) {
   return (
     <>
       <div className="my-1 position-relative">
-        <textarea className={styles["form-control"]}
+        <textarea className={"form-control " + styles["form-control"]}
           value={textareaValue}
           onChange={handleTextareaChange}
           onKeyDown={handleKeyPress} // Ctrl+Enterを押したときの処理を追加
